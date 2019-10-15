@@ -28,11 +28,11 @@ class Log_Parser
 
   def to_s
     if @args.key?('m')
-      @paths.sort { |(_,ad), (_, bd)| sort(ad[:total], bd[:total]) }
-        .map { |p, d| "#{p} #{d[:total]} visit(s)" }.join("\n")
+      @paths.sort { |(_, ad), (_, bd)| sort(ad[:total], bd[:total]) }
+            .map { |p, d| "#{p} #{d[:total]} visit(s)" }.join("\n")
     elsif @args.key?('u')
-      @paths.sort { |(_,ad), (_, bd)| sort(ad[:unique].length, bd[:unique].length) }
-        .map { |p, d| "#{p} #{d[:unique].length} unique view(s)" }.join("\n")
+      @paths.sort { |(_, ad), (_, bd)| sort(ad[:unique].length, bd[:unique].length) }
+            .map { |p, d| "#{p} #{d[:unique].length} unique view(s)" }.join("\n")
     else
       "Total: #{@stats[:total]}, Unique: #{@stats[:unique].length}"
     end
@@ -41,12 +41,12 @@ class Log_Parser
   private
 
   def add_path_to(location, ip, skip_stats = false)
-    location[:total] +=1
+    location[:total] += 1
     location[:unique][ip] = true
     add_path_to(@stats, ip, true) unless skip_stats
   end
 
-  def sort(a,b)
+  def sort(a, b)
     @args.key?('i') ? a <=> b : b <=> a
   end
 end
