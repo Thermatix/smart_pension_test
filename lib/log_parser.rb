@@ -5,4 +5,8 @@ class Log_Parser
   def initialize(log_location)
     @log_location = log_location
   end
+
+  def log_file_exists?
+    File.file?(@log_location)
+  end
 end

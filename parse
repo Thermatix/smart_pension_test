@@ -1,14 +1,15 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'lib/log_parser'
+require_relative 'lib/log_parser'
 
 case ARGV.first
 when '-h', '--help'
   puts <<~TEXT
-    usage: parse file_name.log
+    usage: parse log_file_name.log
            parse [-h | --help]: display help
   TEXT
 else
-  Log_Parser.new(ARGB.first)
+  lp = Log_Parser.new(ARGV.first)
+  puts 'Log file not found' and exit unless lp.log_file_exists?
 end
