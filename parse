@@ -3,13 +3,18 @@
 
 require_relative 'lib/log_parser'
 
-case ARGV.first
-when '-h', '--help'
+log_location = ARGV.first if !ARGV.first.start_with?('-')
+args = Hash[ ARGV.flat_map{|s| s.scan(/--?([^=\s]+)(?:=(\S+))?/) } ]
+
+if args.key?('h') || args.key?('help')
   puts <<~TEXT
-    usage: parse log_file_name.log
-           parse [-h | --help]: display help
+    usage: parse log_file_name.log [-h | -m | -u ]
+           -h, --help:   display help
+           -m, --most:   page views, most viewed to least viewed
+           -u, --unique: unique page views, most_viewed to least_viewed
   TEXT
-else
-  lp = Log_Parser.new(ARGV.first)
-  puts 'Log file not found' and exit unless lp.log_file_exists?
+  exit
 end
+
+lp = Log_Parser.new(log_location, args)
+puts 'Log file not found' and exit unless lp.log_file_exists?
