@@ -2,19 +2,34 @@
 # frozen_string_literal: true
 
 require_relative 'lib/log_parser'
+ARGS_REGEX = /--?([^=\s]+)(?:=(\S+))?/.freeze
 
-log_location = ARGV.first if !ARGV.first.start_with?('-')
-args = Hash[ ARGV.flat_map{|s| s.scan(/--?([^=\s]+)(?:=(\S+))?/) } ]
+log_location = ARGV.first unless ARGV.first.start_with?('-')
+args = Hash[ARGV.flat_map { |s| s.scan(ARGS_REGEX) }]
 
-if args.key?('h') || args.key?('help')
+args['h'] = nil if args['help']
+
+if args.key?('h')
   puts <<~TEXT
     usage: parse log_file_name.log [-h | -m | -u ]
            -h, --help:   display help
            -m, --most:   page views, most viewed to least viewed
            -u, --unique: unique page views, most_viewed to least_viewed
+           -i, --invese: inverse sort
   TEXT
   exit
 end
 
-lp = Log_Parser.new(log_location, args)
-puts 'Log file not found' and exit unless lp.log_file_exists?
+args['m'] = nil if args['most']
+args['u'] = nil if args['unique']
+args['i'] = nil if args['inverse']
+
+log_parser = Log_Parser.new(log_location, args)
+unless log_parser.log_file_exists?
+  warn 'Log file not found'
+  exit(false)
+end
+
+log_parser.execute
+
+puts log_parser
