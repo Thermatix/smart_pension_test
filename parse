@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'lib/parser'
+require 'lib/log_parser'
 
 case ARGV.first
 when '-h', '--help'
@@ -10,5 +10,5 @@ when '-h', '--help'
            parse [-h | --help]: display help
   TEXT
 else
-  process_logs(ARGB.first)
+  Log_Parser.new(ARGB.first)
 end
